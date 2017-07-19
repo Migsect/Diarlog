@@ -16,10 +16,12 @@ const server = http.createServer(app);
  * ########################################################################## */
 
 const DatabaseManager = require("./modules/Database/DatabaseManager");
+require("./modules/models/Account").initializeDatabase();
 
 /* ########################################################################## *
  * # Setting up sessions and other middleware                               # *  
  * ########################################################################## */
+app.locals.middleware = {};
 
 /* Setting up winston for logging */
 const winston = require("winston");
@@ -43,14 +45,30 @@ app.use(expressWinston.logger({
 // const favicon = require("serve-favicon");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+var sassMiddleware = require('node-sass-middleware');
 //app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(sassMiddleware({
+    /* Options */
+    src: path.join(__dirname, "styles"),
+    dest: path.join(__dirname, "/public/stylesheets"),
+    debug: true,
+    response: true,
+    outputStyle: "compressed",
+    prefix: "/stylesheets", // Where prefix is at <link rel="stylesheets" href="prefix/style.css"/>
+    log: function(severity, key, value) {
+        Logger[severity]("[sass]", key, ":", value);
+    },
+    error: function(severity, key, value) {
+        Logger[severity]("[sass]", key, ":", value);
+    }
+}));
 
 /* Session setup */
-const session = require("express-session");
+const session = app.locals.middleware = require("express-session");
 const KnexSessionStore = require("connect-session-knex")(session);
 const appSession = session({
     store: new KnexSessionStore({

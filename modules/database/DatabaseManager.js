@@ -2,7 +2,7 @@
 
 const Knex = require("knex");
 
-const config = require("./config/general").database;
+const config = require(process.cwd() + "/config/general").database;
 
 let instance = null;
 class DatabaseManager {
@@ -13,16 +13,14 @@ class DatabaseManager {
         }
         const connection = Knex(config);
         const databaseManager = new DatabaseManager(connection);
-        Object.defineProperty(module.exports, "instance", {
-            configurable: false,
-            writable: false,
-            value: databaseManager
-        });
+        instance = databaseManager;
         return databaseManager;
     }
 
     static get instance() {
-        DatabaseManager.initialize(config);
+        if (!instance) {
+            DatabaseManager.initialize(config);
+        }
         return instance;
     }
 

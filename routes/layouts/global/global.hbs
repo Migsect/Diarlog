@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{#if pageTitle}}{{title}} - {{/if}}{{siteTitle}}</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/global.css"> {{#each styles}}
+    <link rel="stylesheet" type="text/css" href="{{this}}"> {{/each}}
+</head>
+
+<body>
+    <div class="page">
+        <div class="gutter"></div>
+        <div class="content">
+            <div class="header">
+                <div class="header-title">{{siteTitle}}
+                </div>
+            </div>
+            <div class="navigation">
+                {{#each navigation}} {{/each}}
+            </div>
+            <div class="view">
+                {{{view}}}
+            </div>
+            <div class="footer">
+                <div class="footer-copyright">
+                    Copyright &copy; {{copyright}}</div>
+            </div>
+        </div>
+        <div class="gutter"></div>
+    </div>
+    {{#each scripts}}
+    <script type="text/javascript" src="{{this}}">
+    </script>
+    {{/each}}
+</body>
+
+</html>

@@ -6,7 +6,7 @@
  * Module dependencies.
  */
 
-const { app, server } = require("../app").app;
+const { app, server } = require("../app");
 const debug = require("debug")("diarlog:server");
 /**
  * Get port from environment and store in Express.

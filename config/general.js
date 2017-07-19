@@ -15,5 +15,9 @@ module.exports = {
     sessions: {
         secret: "macro dogos",
         maxAge: 86400000
+    },
+    layout: {
+        name: "Diarlog Development",
+        copyright: "2017 Alex Sammons"
     }
 };

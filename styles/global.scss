@@ -1,0 +1,73 @@
+$background-color: #000000;
+
+$header-background-color: #38023C;
+$header-color: #F2F2F2;
+
+$text-background-color: white;
+$text-color: black;
+
+$primary-color: red;
+$secondary-color: green;
+$tertiary-color: blue;
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    width: 100%;
+    margin: 0px;
+    background-color: $background-color;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: $text-color;
+}
+
+.page {
+    flex: 1 1 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 100%;
+}
+
+.gutter {
+    flex: 1 1 0px;
+}
+
+.content {
+    background-color: rgba(255, 255, 255, 0.95);
+    max-width: 900px;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    padding: 16px;
+    font-size: 28px;
+    background-color: $header-background-color;
+    color: $header-color
+}
+
+.navigation {}
+
+.view {
+    padding: 32px;
+}
+
+.footer {
+    border-color: rgba(0, 0, 0, 0.1);
+    border-top-style: solid;
+    border-width: 1px;
+    padding: 16px;
+}
+
+.footer-copyright {
+    text-align: center;
+}

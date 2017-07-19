@@ -1,0 +1,11 @@
+{
+    "verbose": true,
+    "ignore": [
+        "node_modules/*.js", "node_modules/**.js",
+        "web_modules/*.js", "web_modules/**.js",
+        "public/**.js",
+        "README",
+        "data/*"
+    ],
+    "ext": "js html hbs scss"
+}
