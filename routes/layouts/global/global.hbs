@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{#if pageTitle}}{{title}} - {{/if}}{{siteTitle}}</title>
+    <title>{{#if pageTitle}}{{pageTitle}}{{title}} - {{/if}}{{siteTitle}}</title>
     <link rel="stylesheet" type="text/css" href="/stylesheets/global.css"> {{#each styles}}
     <link rel="stylesheet" type="text/css" href="{{this}}"> {{/each}}
 </head>
@@ -16,14 +16,24 @@
                 </div>
             </div>
             <div class="navigation">
-                {{#each navigation}} {{/each}}
+                {{#each navigation}}
+                <a href="{{address}}" class="navigation-item {{#if active}}active{{/if}}">
+                    {{display}}
+                </a> {{/each}}
             </div>
+            {{#if pageTitle}}
+            <div class="page-title">{{pageTitle}}</div>{{/if}}
             <div class="view">
                 {{{view}}}
             </div>
             <div class="footer">
+                <div class="footer-links">
+                    {{#each links}}
+                    <a href="{{address}}" class="footer-links-item {{#if active}}active{{/if}}">{{display}}</a> {{/each}}
+                </div>
                 <div class="footer-copyright">
-                    Copyright &copy; {{copyright}}</div>
+                    Copyright &copy; {{copyright}}
+                </div>
             </div>
         </div>
         <div class="gutter"></div>

@@ -17,7 +17,7 @@ module.exports = {
         maxAge: 86400000
     },
     layout: {
-        name: "Diarlog Development",
+        siteTitle: "Diarlog Development",
         copyright: "2017 Alex Sammons"
     }
 };

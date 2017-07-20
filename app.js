@@ -101,10 +101,16 @@ io.use(sharedsession(app.locals.middleware.session, {
  * ########################################################################## */
 
 const index = require("./routes/index");
-const users = require("./routes/users");
+const auth = require("./routes/auth");
+const blogs = require("./routes/blogs");
+const dumps = require("./routes/dumps");
+const collaborators = require("./routes/auth");
 
 app.use("/", index);
-app.use("/users", users);
+app.use("/auth", auth);
+app.use("/blogs", blogs);
+app.use("/dumps", dumps);
+app.use("/collaborators", collaborators);
 
 /* ########################################################################## *
  * # Developer / Debug Stuff                                                # *  
