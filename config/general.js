@@ -19,5 +19,11 @@ module.exports = {
     layout: {
         siteTitle: "Diarlog Development",
         copyright: "2017 Alex Sammons"
+    },
+    accounts: {
+        root: {
+            email: "root",
+            password: "root"
+        }
     }
 };
