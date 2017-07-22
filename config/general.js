@@ -21,9 +21,6 @@ module.exports = {
         copyright: "2017 Alex Sammons"
     },
     accounts: {
-        root: {
-            email: "root",
-            password: "root"
-        }
+        rootPassword: "root"
     }
 };

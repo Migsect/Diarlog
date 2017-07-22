@@ -17,6 +17,8 @@ const server = http.createServer(app);
 
 const DatabaseManager = require("./modules/Database/DatabaseManager");
 require("./modules/models/Account").initializeDatabase();
+require("./modules/models/Collection").initializeDatabase();
+require("./modules/models/Content").initializeDatabase();
 
 /* ########################################################################## *
  * # Setting up sessions and other middleware                               # *  
@@ -60,10 +62,18 @@ app.use(sassMiddleware({
     outputStyle: "compressed",
     prefix: "/stylesheets", // Where prefix is at <link rel="stylesheets" href="prefix/style.css"/>
     log: function(severity, key, value) {
-        Logger[severity]("[sass]", key, ":", value);
+        if (Logger[severity]) {
+            Logger[severity]("[sass]", key, ":", value);
+        } else {
+            Logger.info("[sass - " + severity + "]", key, ":", value);
+        }
     },
     error: function(severity, key, value) {
-        Logger[severity]("[sass]", key, ":", value);
+        if (Logger[severity]) {
+            Logger[severity]("[sass]", key, ":", value);
+        } else {
+            Logger.error("[sass - " + severity + "]", key, ":", value);
+        }
     }
 }));
 
@@ -102,12 +112,14 @@ io.use(sharedsession(app.locals.middleware.session, {
 
 const index = require("./routes/index");
 const auth = require("./routes/auth");
+const account = require("./routes/account");
 const blogs = require("./routes/blogs");
 const dumps = require("./routes/dumps");
 const collaborators = require("./routes/auth");
 
 app.use("/", index);
 app.use("/auth", auth);
+app.use("/auth", account);
 app.use("/blogs", blogs);
 app.use("/dumps", dumps);
 app.use("/collaborators", collaborators);

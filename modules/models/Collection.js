@@ -16,16 +16,16 @@ class Collection {
         const connection = DatabaseManager.instance.connection;
         return connection.schema.createTableIfNotExists(COLLECTION_TABLE_NAME, function(table) {
             table.increments("dbid").primary().notNullable();
-        }).then(() => {
-            return connection.table(COLLECTION_TABLE_NAME, function(table) {
-                table.uuid("uuid").notNullable();
-                table.string("type").notNullable();
-                table.string("name").notNullable();
-                table.json("permissions").notNullable();
-                table.json("settings").notNullable();
-                table.json("meta").notNullable();
-                table.json("data").notNullable();
-            });
+            table.uuid("uuid").notNullable();
+            table.string("type").notNullable();
+            table.string("name").notNullable();
+            table.json("permissions").notNullable();
+            table.json("settings").notNullable();
+            table.json("meta").notNullable();
+            table.json("data").notNullable();
+        }).catch(error => {
+            Logger.error(COLLECTION_TABLE_NAME, error);
+            throw error;
         });
     }
 

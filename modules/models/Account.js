@@ -6,26 +6,53 @@ const Uuid = require("uuid/v4");
 const DatabaseManager = require("../database/DatabaseManager");
 const Logger = require(process.cwd() + "/modules/Logger");
 
+const accountsConfig = require(process.cwd() + "/config/general").accounts;
+
 const ACCOUNT_TABLE_NAME = "account";
+
+let rootAccount = null;
 
 class Account {
     static get table() {
         return ACCOUNT_TABLE_NAME;
     }
+
+    static get root() {
+        if (!rootAccount && accountsConfig && accountsConfig.rootPassword) {
+            rootAccount = new Account({
+                dbid: -1,
+                name: "root",
+                email: "root",
+                password: PasswordHash.generate(accountsConfig.rootPassword),
+                permissions: {
+                    global: true
+                },
+                settings: {
+                    editable: false
+
+                },
+                data: {
+
+                }
+            });
+        }
+        return rootAccount;
+    }
+
     static initializeDatabase() {
         const connection = DatabaseManager.instance.connection;
         return connection.schema.createTableIfNotExists(ACCOUNT_TABLE_NAME, function(table) {
             table.increments("dbid").primary().notNullable();
-        }).then(() => {
-            return connection.table(ACCOUNT_TABLE_NAME, function(table) {
-                table.uuid("uuid").notNullable();
-                table.string("name").notNullable();
-                table.string("email").notNullable();
-                table.string("password").notNullable();
-                table.json("permissions").notNullable();
-                table.json("settings").notNullable();
-                table.json("data").notNullable();
-            });
+            table.uuid("uuid").notNullable();
+            table.string("name").notNullable();
+            table.string("email").notNullable();
+            table.string("password").notNullable();
+            table.json("permissions").notNullable();
+            table.json("settings").notNullable();
+            table.json("data").notNullable();
+        }).catch(error => {
+            Logger.error(ACCOUNT_TABLE_NAME, error);
+            throw error;
         });
     }
 
@@ -97,9 +124,9 @@ class Account {
         this.email = config.email;
         this.password = config.password;
 
-        this.permissions = JSON.parse(config.permissions);
-        this.settings = JSON.parse(config.settings);
-        this.data = JSON.parse(config.data);
+        this.permissions = config.permissions.length ? JSON.parse(config.permissions) : {};
+        this.settings = config.settings.length ? JSON.parse(config.settings) : {};
+        this.data = config.data.length ? JSON.parse(config.data) : {};
     }
 
     verify(passwordAttempt) {
