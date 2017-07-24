@@ -29,12 +29,18 @@ const coreLinks = [{
     {
         display: "Diarlog",
         address: "https://github.com/Migsect/Diarlog"
-    },
-    {
-        display: "Sign in",
-        address: "/auth"
     }
 ];
+
+const signinLink = {
+    display: "Sign in",
+    address: "/auth"
+
+};
+const signoutLink = {
+    display: "Sign out",
+    address: "/auth/signout"
+};
 
 module.exports = function(request, view, options) {
     const pagePath = url.parse(request.originalUrl).pathname;
@@ -57,6 +63,6 @@ module.exports = function(request, view, options) {
             }
             return newItem;
         }),
-        links: coreLinks
+        links: coreLinks.concat([account ? signoutLink : signinLink])
     });
 };

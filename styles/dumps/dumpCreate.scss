@@ -1,0 +1,16 @@
+.section {
+    padding: 8px;
+    border-color: rgba(0, 0, 0, 0.2);
+    border-width: 1px;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+}
+
+.section:not(:first-child) {
+    margin-top: 8px;
+}
+
+.section-header {
+    font-size: 120%;
+}

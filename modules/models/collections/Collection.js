@@ -2,16 +2,29 @@
 
 const Uuid = require("uuid/v4");
 
-const DatabaseManager = require("../database/DatabaseManager");
+const DatabaseManager = require(process.cwd() + "/modules/database/DatabaseManager");
 const Logger = require(process.cwd() + "/modules/Logger");
 
 const COLLECTION_TABLE_NAME = "collection";
+const types = new Map();
 
 class Collection {
+
+    /**
+     * The table name for the collections.
+     * 
+     * @return {String} The name of the table for collections.
+     */
     static get table() {
         return COLLECTION_TABLE_NAME;
     }
 
+    /**
+     * Initializes the database for collections.
+     * Returns a promise that will resolve when the table for the collections is created.
+     * Throws errors go to catch for the promise.
+     * @return {Promise} Promise to resolve when the table is created
+     */
     static initializeDatabase() {
         const connection = DatabaseManager.instance.connection;
         return connection.schema.createTableIfNotExists(COLLECTION_TABLE_NAME, function(table) {
@@ -29,10 +42,38 @@ class Collection {
         });
     }
 
+    /**
+     * Registers a constructor to be used for the type of collection.
+     * Whenever a new collection is retrieved from the database or is created, this type
+     * will be it's first class with a parent being the collection class.
+     *
+     * Throws an error if type has already been registered for by another sub-class.
+     * 
+     * @param  {String} type The type to register the constructor as.
+     * @param  {Functiion} constructor The constructor to register for the type.
+     */
+    static registerType(type, constructor) {
+        if (types.has(type)) {
+            throw new Error("Collection type '" + type + "' already exsists. Cannot register '" + constructor.name + "'.");
+        }
+        types.set(type, constructor);
+    }
+
+    /**
+     * Creates a new collection with the specified type and name.
+     * If the type is not a valid type, then an error will be thrown and can be caught from the
+     * promise.  This returns the newly created collection when the promise resolves.
+     * 
+     * @param  {String} type The type of the collection to create.
+     * @param  {String} name The name of the collection to create.
+     * @return {Promise}      The promise to provide the newly created collection.
+     */
     static createCollection(type, name) {
         const connection = DatabaseManager.instance.connection;
         const uuid = Uuid();
-
+        if (!types.has(type)) {
+            return Promise.reject(new Error("Invalid Type:", type));
+        }
         return connection(COLLECTION_TABLE_NAME).insert({
             uuid: uuid,
             type: type,
@@ -43,7 +84,11 @@ class Collection {
             meta: JSON.stringify({}),
             data: JSON.stringify({})
         }).then(dbid => {
-            const account = new Collection({
+            const constructor = types.get(type.toLowerCase());
+            if (!constructor) {
+                throw new Error("Invalid Type:", type);
+            }
+            const account = new constructor({
                 dbid: dbid,
                 uuid: uuid,
                 type: type,
@@ -58,12 +103,33 @@ class Collection {
         });
     }
 
+    /**
+     * Gets all the collections that match the query.  If no promises exist that match the
+     * query then an empty list is returned.
+     *
+     * If any of the return items fail to match to a type, an error is thrown.
+     * 
+     * @param  {Object} query The query to search for
+     * @return {Promise} A promise to return all the matching collections.
+     */
     static getCollections(query) {
         const connection = DatabaseManager.instance.connection;
         return connection(COLLECTION_TABLE_NAME)
             .select()
             .where(query)
-            .then(results => results.map(result => new Collection(result)));
+            .then(results => results.map(result => {
+                const constructor = types.get(result.type);
+                if (!constructor) {
+                    throw new Error("Invalid Type:", result.type, result);
+                }
+                return new constructor(result);
+            }));
+    }
+
+    static getCollectionsByType(type) {
+        return Collection.getCollections({
+            type: type
+        });
     }
 
     static getCollection(query) {
@@ -85,7 +151,7 @@ class Collection {
 
         this.name = config.name;
 
-        this.contents = config.contents;
+        this.contents = JSON.parse(config.contents);
 
         this.permissions = JSON.parse(config.permissions);
         this.settings = JSON.parse(config.settings);
@@ -104,6 +170,7 @@ class Collection {
             .where("dbid", this.dbid)
             .update({
                 name: this.name,
+                contents: JSON.stringify([]),
                 permissions: JSON.stringify(this.permissions),
                 settings: JSON.stringify(this.settings),
                 data: JSON.stringify(this.data)

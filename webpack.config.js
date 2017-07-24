@@ -4,7 +4,11 @@ const path = require("path");
 
 module.exports = {
     entry: {
-        auth: "./web_modules/entry/auth.js"
+        auth: "./web_modules/entry/auth.js",
+        "blogs/blog": "./web_modules/entry/blogs/blog.js",
+        "blogs/blogCreate": "./web_modules/entry/blogs/blogCreate.js",
+        "dumps/dump": "./web_modules/entry/dumps/dump.js",
+        "dumps/dumpCreate": "./web_modules/entry/dumps/dumpCreate.js"
     },
     output: {
         filename: "[name]-entry.js",

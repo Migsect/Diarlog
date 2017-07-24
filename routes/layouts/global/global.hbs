@@ -14,6 +14,13 @@
             <div class="header">
                 <div class="header-title">{{siteTitle}}
                 </div>
+                <div class="header-padding"></div>
+                <div class="header-info">
+                    {{#if account}}
+                    <div class="header-info-item">
+                        <span class="key">Account: </span>{{account.name}}
+                    </div>{{/if}}
+                </div>
             </div>
             <div class="navigation">
                 {{#each navigation}}

@@ -10,8 +10,12 @@ const templates = require(process.cwd() + "/templates/templates");
 const authPage = templates(__dirname + "/pages/auth");
 const globalLayout = require("./layouts/global");
 
-/* GET home page. */
+/* GET sign in page. */
 router.get("/", (request, response) => {
+    const session = request.session;
+    if (session.account) {
+        response.redirect("/account");
+    }
     response.send(globalLayout(request, authPage({
         pageTitle: "Sign In"
     }), {
@@ -21,16 +25,19 @@ router.get("/", (request, response) => {
     }));
 });
 
+/* POST signs in a user, rejects if email+password fail to verify or not enough info is given */
 router.post("/signin", (request, response) => {
     const session = request.session;
     if (session.account) {
         response.status(403).json({
-            message: "Already signed in"
+            message: "Already signed in",
+            redirect: "/account"
         });
+        return;
     }
     const body = request.body;
-    const email = body.email;
-    const password = body.password;
+    const email = body.email.trim();
+    const password = body.password.trim();
     if (email === "root" && Account.root.verify(password)) {
         session.account = Account.root;
         response.status(200).json({
@@ -58,6 +65,7 @@ router.post("/signin", (request, response) => {
     });
 });
 
+/* GET signs out a user. This works regardless of whether the user was signed in or not. */
 router.get("/signout", (request, response) => {
     const session = request.session;
     session.account = null;

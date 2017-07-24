@@ -12,8 +12,8 @@ router.get("/", (request, response) => {
     response.send(globalLayout(request, accountPage({
         pageTitle: "Account"
     }), {
-        styles: ["/stylesheets/auth.css"],
-        scripts: ["/javascipts/built/auth.js"],
+        styles: ["/stylesheets/account.css"],
+        scripts: [],
         pageTitle: "Account"
     }));
 });

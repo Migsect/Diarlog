@@ -1,0 +1,14 @@
+<div class="dump-list">
+    {{#each dumps}}
+    <a class="dump-list-item clickable" href="/dumps/{{id}}">
+    	<img src="dump-image">
+    	<div class="dump-info">
+        <div class="dump-info-item">{{name}}</div>
+        <div class="dump-info-filler"></div>
+        <div class="dump-info-item">{{owner}}</div>
+        </div>
+    </a> {{/each}} {{#if canCreate}}
+    <a id="create-dump" class="dump-list-item dump-list-item-create-new clickable" href="/dumps/create">
+        +
+    </a> {{/if}}
+</div>

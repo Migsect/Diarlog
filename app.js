@@ -16,9 +16,14 @@ const server = http.createServer(app);
  * ########################################################################## */
 
 const DatabaseManager = require("./modules/Database/DatabaseManager");
+/* Core Models */
 require("./modules/models/Account").initializeDatabase();
-require("./modules/models/Collection").initializeDatabase();
+require("./modules/models/collections/Collection").initializeDatabase();
 require("./modules/models/Content").initializeDatabase();
+
+/* Types of core models */
+require("./modules/models/collections/DumpCollection");
+require("./modules/models/collections/BlogCollection");
 
 /* ########################################################################## *
  * # Setting up sessions and other middleware                               # *  
@@ -119,7 +124,7 @@ const collaborators = require("./routes/auth");
 
 app.use("/", index);
 app.use("/auth", auth);
-app.use("/auth", account);
+app.use("/account", account);
 app.use("/blogs", blogs);
 app.use("/dumps", dumps);
 app.use("/collaborators", collaborators);

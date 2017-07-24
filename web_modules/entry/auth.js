@@ -9,7 +9,7 @@ const signinEmail = $("#signin-email");
 const signinPassword = $("#signin-password");
 const signinButton = $("#signin-button");
 
-signinPanel.addEventListener("click", (event) => {
+signinPanel.addEventListener("keyup", (event) => {
     event.preventDefault();
     if (event.keyCode == 13) {
         signinButton.click();
@@ -30,9 +30,16 @@ signinButton.addEventListener("click", () => {
         email: email,
         password: password
     }).then((response) => {
-        console.log(response);
+        const status = response.status;
+        const message = response.message;
+        const redirect = response.redirect;
+        console.log("response:", status, message);
+        if (redirect) {
+            console.log("redirect:", redirect);
+            window.location = redirect;
+        }
     }).catch((request) => {
-        window.alert("There was an issue with the server...");
-        console.log("There was an issue with the server:", request);
+        window.alert("Internal Server Error");
+        console.log("Internal Server Error", request);
     });
 });
