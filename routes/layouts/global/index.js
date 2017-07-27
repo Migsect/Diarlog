@@ -5,7 +5,7 @@ const url = require("url");
 const templates = require(process.cwd() + "/templates/templates");
 const layoutTemplate = templates(__dirname + "/global");
 
-const layoutConfig = require(process.cwd() + "/config/general").layout;
+const layoutConfig = require(process.cwd() + "/config").layout;
 const siteTitle = layoutConfig.siteTitle || "NO NAME SPECIFIED";
 const copyright = layoutConfig.copyright;
 

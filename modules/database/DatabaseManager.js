@@ -2,7 +2,7 @@
 
 const Knex = require("knex");
 
-const config = require(process.cwd() + "/config/general").database;
+const config = require(process.cwd() + "/config").database;
 
 let instance = null;
 class DatabaseManager {

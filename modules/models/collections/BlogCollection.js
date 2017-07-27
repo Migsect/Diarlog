@@ -7,5 +7,5 @@ class BlogCollection extends Collection {
         super(config);
     }
 }
-
+Collection.registerType("blog", BlogCollection);
 module.exports = BlogCollection;

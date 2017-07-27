@@ -1,9 +1,14 @@
 "use strict";
 
+const path = require("path");
 const Uuid = require("uuid/v4");
 
 const DatabaseManager = require(process.cwd() + "/modules/database/DatabaseManager");
+const Content = require(process.cwd() + "/modules/models/content/Content");
 const Logger = require(process.cwd() + "/modules/Logger");
+
+const config = require(process.cwd() + "/config");
+const collectionsDirectory = path.join((config.data && config.data.saveDirectory) || "./data", "collections");
 
 const COLLECTION_TABLE_NAME = "collection";
 const types = new Map();
@@ -31,9 +36,8 @@ class Collection {
             table.increments("dbid").primary().notNullable();
             table.uuid("uuid").notNullable();
             table.string("type").notNullable();
-            table.string("name").notNullable();
+            table.string("title").notNullable();
             table.json("permissions").notNullable();
-            table.json("settings").notNullable();
             table.json("meta").notNullable();
             table.json("data").notNullable();
         }).catch(error => {
@@ -60,15 +64,26 @@ class Collection {
     }
 
     /**
-     * Creates a new collection with the specified type and name.
+     * Constructs collection, grabbing the needed constructor to do so.
+     * 
+     * @param  {Object} config The config to construct with.
+     * @return {Collection} The constructed collection.
+     */
+    static constructCollection(config) {
+        const constructor = types.get(config.type) || Content;
+        return new constructor(config);
+    }
+
+    /**
+     * Creates a new collection with the specified type and title.
      * If the type is not a valid type, then an error will be thrown and can be caught from the
      * promise.  This returns the newly created collection when the promise resolves.
      * 
      * @param  {String} type The type of the collection to create.
-     * @param  {String} name The name of the collection to create.
+     * @param  {String} title The title of the collection to create.
      * @return {Promise}      The promise to provide the newly created collection.
      */
-    static createCollection(type, name) {
+    static createCollection(type, title) {
         const connection = DatabaseManager.instance.connection;
         const uuid = Uuid();
         if (!types.has(type)) {
@@ -77,29 +92,23 @@ class Collection {
         return connection(COLLECTION_TABLE_NAME).insert({
             uuid: uuid,
             type: type,
-            name: name,
+            title: title,
             contents: JSON.stringify([]),
             permissions: JSON.stringify({}),
-            settings: JSON.stringify({}),
             meta: JSON.stringify({}),
             data: JSON.stringify({})
         }).then(dbid => {
-            const constructor = types.get(type.toLowerCase());
-            if (!constructor) {
-                throw new Error("Invalid Type:", type);
-            }
-            const account = new constructor({
+            const config = {
                 dbid: dbid,
                 uuid: uuid,
                 type: type,
-                name: name,
+                title: title,
                 contents: [],
                 permissions: {},
-                settings: {},
                 meta: {},
                 data: {}
-            });
-            return account;
+            };
+            return Collection.constructCollection(config);
         });
     }
 
@@ -118,20 +127,30 @@ class Collection {
             .select()
             .where(query)
             .then(results => results.map(result => {
-                const constructor = types.get(result.type);
-                if (!constructor) {
-                    throw new Error("Invalid Type:", result.type, result);
-                }
-                return new constructor(result);
+                return Collection.constructCollection(result);
             }));
     }
 
+    /**
+     * Retrieves a list of collections based on its type.
+     * This is generally to query for all dumps or for all blogs (the current two at the writing of this.)
+     * 
+     * @param  {String} type The string id of the collection type to find.
+     * @return {Promise}      A promise to return a list of collections (may be none)
+     */
     static getCollectionsByType(type) {
         return Collection.getCollections({
             type: type
         });
     }
 
+    /**
+     * Returns a singular collection matching the query or null if no collection is found to match the query.
+     * This returns a promise that resolves when the query to the database returns.
+     * 
+     * @param  {Object} query The query object
+     * @return {Promise} The promise to return the first collection to match the query.
+     */
     static getCollection(query) {
         return Collection.getCollections(query)
             .then(collections => collections.length > 0 ? collections[0] : null);
@@ -140,8 +159,8 @@ class Collection {
     static getCollectionByUUID(id) {
         return Collection.getCollection({ uuid: id });
     }
-    static getCollectionByName(name) {
-        return Collection.getCollection({ name: name });
+    static getCollectionByTitle(title) {
+        return Collection.getCollection({ title: title });
     }
 
     constructor(config) {
@@ -149,14 +168,17 @@ class Collection {
         this.uuid = config.uuid;
         this.type = config.type;
 
-        this.name = config.name;
+        this.title = config.title;
 
+        /** @type {String[]} A list of all the content contained within this collection */
         this.contents = JSON.parse(config.contents);
 
         this.permissions = JSON.parse(config.permissions);
-        this.settings = JSON.parse(config.settings);
         this.meta = JSON.parse(config.meta);
         this.data = JSON.parse(config.data);
+
+        /** @type {String} The path to the save directory of the collection */
+        this.saveDirectory = path.join(collectionsDirectory, this.type, this.uuid);
     }
 
     /**
@@ -169,12 +191,34 @@ class Collection {
         return connection(COLLECTION_TABLE_NAME)
             .where("dbid", this.dbid)
             .update({
-                name: this.name,
+                title: this.title,
                 contents: JSON.stringify([]),
                 permissions: JSON.stringify(this.permissions),
                 settings: JSON.stringify(this.settings),
+                meta: JSON.stringify(this.meta),
                 data: JSON.stringify(this.data)
             });
+    }
+
+    /**
+     * Adds a content item to the collection.
+     * This merely changes the live version of the collection, if one wishes to 
+     *
+     * @param {Content} content The content item to add to the collection.
+     */
+    addContent(content) {
+        this.content.push(content.dbid);
+    }
+
+    /**
+     * performs a query to retrieve all content.
+     * This makes use of all the dbids within the contents.
+     * This performs a specialized query.
+     *
+     * @return {Promise} A promise to get all the content.
+     */
+    getContents() {
+        return Content.getContentsInList("dbid", this.contents);
     }
 }
 

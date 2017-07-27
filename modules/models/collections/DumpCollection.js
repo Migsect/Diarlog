@@ -8,4 +8,5 @@ class DumpCollection extends Collection {
     }
 }
 
+Collection.registerType("dump", DumpCollection);
 module.exports = DumpCollection;

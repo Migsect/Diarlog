@@ -8,6 +8,9 @@ module.exports = {
         },
         useNullAsDefault: true
     },
+    data: {
+        saveDirectory: "./data"
+    },
     logging: {
         level: "debug",
         fileLevel: "info"

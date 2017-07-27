@@ -6,7 +6,7 @@ const Uuid = require("uuid/v4");
 const DatabaseManager = require("../database/DatabaseManager");
 const Logger = require(process.cwd() + "/modules/Logger");
 
-const accountsConfig = require(process.cwd() + "/config/general").accounts;
+const accountsConfig = require(process.cwd() + "/config").accounts;
 
 const ACCOUNT_TABLE_NAME = "account";
 

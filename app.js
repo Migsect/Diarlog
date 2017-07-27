@@ -6,7 +6,7 @@ const path = require("path");
 
 const Logger = require(process.cwd() + "/modules/Logger");
 
-const config = require("./config/general");
+const config = require("./config");
 
 const app = express();
 const server = http.createServer(app);
@@ -19,11 +19,14 @@ const DatabaseManager = require("./modules/Database/DatabaseManager");
 /* Core Models */
 require("./modules/models/Account").initializeDatabase();
 require("./modules/models/collections/Collection").initializeDatabase();
-require("./modules/models/Content").initializeDatabase();
+require("./modules/models/content/Content").initializeDatabase();
 
 /* Types of core models */
 require("./modules/models/collections/DumpCollection");
 require("./modules/models/collections/BlogCollection");
+
+require("./modules/models/content/BlogContent");
+require("./modules/models/content/DumpContent");
 
 /* ########################################################################## *
  * # Setting up sessions and other middleware                               # *  

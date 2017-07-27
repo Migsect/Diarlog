@@ -3,7 +3,7 @@
 const winston = require("winston");
 const prettyjson = require("prettyjson");
 
-const config = require(process.cwd() + "/config/general");
+const config = require(process.cwd() + "/config");
 
 const Logger = new(winston.Logger)({
     transports: [
