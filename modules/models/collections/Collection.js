@@ -194,7 +194,6 @@ class Collection {
                 title: this.title,
                 contents: JSON.stringify([]),
                 permissions: JSON.stringify(this.permissions),
-                settings: JSON.stringify(this.settings),
                 meta: JSON.stringify(this.meta),
                 data: JSON.stringify(this.data)
             });
@@ -219,6 +218,14 @@ class Collection {
      */
     getContents() {
         return Content.getContentsInList("dbid", this.contents);
+    }
+
+    get description() {
+        return this.meta.description || "";
+    }
+
+    set description(value) {
+        this.meta.description = value;
     }
 }
 

@@ -4,15 +4,15 @@ const express = require("express");
 const router = express.Router();
 
 const templates = require(process.cwd() + "/templates/templates");
-const accountPage = templates(__dirname + "/pages/account");
-const globalLayout = require("./layouts/global");
+const page = templates(__dirname + "/page");
+const globalLayout = require(process.cwd() + "/layouts/global");
 
 /* GET home page. */
 router.get("/", (request, response) => {
-    response.send(globalLayout(request, accountPage({
+    response.send(globalLayout(request, page({
         pageTitle: "Account"
     }), {
-        styles: ["/stylesheets/account.css"],
+        styles: ["/stylesheets/account/styles.css"],
         scripts: [],
         pageTitle: "Account"
     }));

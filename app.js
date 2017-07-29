@@ -63,7 +63,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(sassMiddleware({
     /* Options */
-    src: path.join(__dirname, "styles"),
+    src: path.join(__dirname, "routes"),
     dest: path.join(__dirname, "/public/stylesheets"),
     debug: true,
     response: true,
@@ -118,14 +118,14 @@ io.use(sharedsession(app.locals.middleware.session, {
  * # Setting up the routes                                                  # *  
  * ########################################################################## */
 
-const index = require("./routes/index");
+const home = require("./routes/home");
 const auth = require("./routes/auth");
 const account = require("./routes/account");
 const blogs = require("./routes/blogs");
 const dumps = require("./routes/dumps");
 const collaborators = require("./routes/auth");
 
-app.use("/", index);
+app.use("/", home);
 app.use("/auth", auth);
 app.use("/account", account);
 app.use("/blogs", blogs);

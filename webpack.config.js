@@ -1,15 +1,30 @@
 "use strict";
 
 const path = require("path");
+const fs = require("fs-extra");
+
+function constructEntries(directory, topLevel = true) {
+    const entries = {};
+    const files = fs.readdirSync(directory);
+    files.forEach((file) => {
+        const filePath = path.join(directory, file);
+        const dirname = topLevel ? "" : path.basename(path.dirname(filePath));
+        const stats = fs.statSync(filePath);
+        if (stats.isDirectory()) {
+            const subEntries = constructEntries(filePath, false);
+            for (let key in subEntries) {
+                entries[path.join(dirname, key)] = subEntries[key];
+            }
+        } else if (file.trim().endsWith("client.js")) {
+            const basename = path.basename(filePath);
+            entries[path.join(dirname, basename.substring(0, basename.lastIndexOf(".js")))] = "./" + filePath;
+        }
+    });
+    return entries;
+}
 
 module.exports = {
-    entry: {
-        auth: "./web_modules/entry/auth.js",
-        "blogs/blog": "./web_modules/entry/blogs/blog.js",
-        "blogs/blogCreate": "./web_modules/entry/blogs/blogCreate.js",
-        "dumps/dump": "./web_modules/entry/dumps/dump.js",
-        "dumps/dumpCreate": "./web_modules/entry/dumps/dumpCreate.js"
-    },
+    entry: constructEntries("./routes"),
     output: {
         filename: "[name]-entry.js",
         path: __dirname + "/public/javascripts/built"

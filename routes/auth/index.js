@@ -7,8 +7,8 @@ const Account = require(process.cwd() + "/modules/models/Account");
 const Logger = require(process.cwd() + "/modules/Logger");
 
 const templates = require(process.cwd() + "/templates/templates");
-const authPage = templates(__dirname + "/pages/auth");
-const globalLayout = require("./layouts/global");
+const page = templates(__dirname + "/page");
+const globalLayout = require(process.cwd() + "/layouts/global");
 
 /* GET sign in page. */
 router.get("/", (request, response) => {
@@ -16,10 +16,10 @@ router.get("/", (request, response) => {
     if (session.account) {
         response.redirect("/account");
     }
-    response.send(globalLayout(request, authPage({
+    response.send(globalLayout(request, page({
         pageTitle: "Sign In"
     }), {
-        styles: ["/stylesheets/auth.css"],
+        styles: ["/stylesheets/auth/styles.css"],
         scripts: ["/javascripts/built/auth-entry.js"],
         pageTitle: "Sign In"
     }));
