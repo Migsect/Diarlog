@@ -4,26 +4,28 @@ const Utils = require("WebUtils");
 
 const $ = document.querySelector.bind(document);
 
-const createName = $("#create-name");
+const createTitle = $("#create-title");
 const createDescription = $("#create-description");
 const createButton = $("#create-button");
 
 createButton.addEventListener("click", () => {
-    const name = createName.value;
+    const title = createTitle.value;
     const description = createDescription.value;
-    if (name.length <= 0) {
-        window.alert("Name not entered");
+    if (title.length <= 0) {
+        window.alert("Title not entered");
         return;
     }
-
     Utils.sendPost("/dumps/create", {
-        name: name,
+        title: title,
         description: description
     }).then((response) => {
         const status = response.status;
         const message = response.message;
         const redirect = response.redirect;
         console.log("response:", status, message);
+        if (status >= 400) {
+            window.alert(message);
+        }
         if (redirect) {
             console.log("redirect:", redirect);
             window.location = redirect;

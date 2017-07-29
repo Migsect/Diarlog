@@ -37,6 +37,7 @@ class Collection {
             table.uuid("uuid").notNullable();
             table.string("type").notNullable();
             table.string("title").notNullable();
+            table.json("contents").notNullable();
             table.json("permissions").notNullable();
             table.json("meta").notNullable();
             table.json("data").notNullable();
@@ -99,7 +100,7 @@ class Collection {
             data: JSON.stringify({})
         }).then(dbid => {
             const config = {
-                dbid: dbid,
+                dbid: dbid[0],
                 uuid: uuid,
                 type: type,
                 title: title,
@@ -171,11 +172,11 @@ class Collection {
         this.title = config.title;
 
         /** @type {String[]} A list of all the content contained within this collection */
-        this.contents = JSON.parse(config.contents);
+        this.contents = config.contents;
 
-        this.permissions = JSON.parse(config.permissions);
-        this.meta = JSON.parse(config.meta);
-        this.data = JSON.parse(config.data);
+        this.permissions = config.permissions;
+        this.meta = config.meta;
+        this.data = config.data;
 
         /** @type {String} The path to the save directory of the collection */
         this.saveDirectory = path.join(collectionsDirectory, this.type, this.uuid);
@@ -192,11 +193,11 @@ class Collection {
             .where("dbid", this.dbid)
             .update({
                 title: this.title,
-                contents: JSON.stringify([]),
+                contents: JSON.stringify(this.contents),
                 permissions: JSON.stringify(this.permissions),
                 meta: JSON.stringify(this.meta),
                 data: JSON.stringify(this.data)
-            });
+            }).then((result) => result); /* Note: needs to be done for query to execute */
     }
 
     /**

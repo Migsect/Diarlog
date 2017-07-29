@@ -78,7 +78,7 @@ class Account {
                 data: JSON.stringify({})
             }).then(dbid => {
                 const account = new Account({
-                    dbid: dbid,
+                    dbid: dbid[0],
                     uuid: uuid,
                     name: name,
                     email: email,

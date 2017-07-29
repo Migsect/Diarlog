@@ -36,10 +36,17 @@ router.post("/", (request, response) => {
 
     const body = request.body;
     const title = body.title;
-    const description = body.description;
-
+    const description = body.description || "";
+    if (!title) {
+        response.status(400).json({
+            message: "key 'title' undefined"
+        });
+        return;
+    }
     Collection.createCollection("dump", title).then((collection) => {
-
+        collection.description = description;
+        console.log(collection);
+        collection.save().then((result) => console.log(result));
     });
 
     response.status(200).json({

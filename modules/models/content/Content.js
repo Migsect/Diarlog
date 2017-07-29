@@ -84,7 +84,7 @@ class Content {
             data: JSON.stringify({})
         }).then(dbid => {
             const config = {
-                dbid: dbid,
+                dbid: dbid[0],
                 uuid: uuid,
                 type: type,
                 title: title,
