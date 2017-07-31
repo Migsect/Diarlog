@@ -1,6 +1,7 @@
 "use strict";
 
 const path = require("path");
+const Hashids = require("hashids");
 const Uuid = require("uuid/v4");
 
 const DatabaseManager = require(process.cwd() + "/modules/database/DatabaseManager");
@@ -10,6 +11,7 @@ const Logger = require(process.cwd() + "/modules/Logger");
 const config = require(process.cwd() + "/config");
 const collectionsDirectory = path.join((config.data && config.data.saveDirectory) || "./data", "collections");
 
+const hashids = new Hashids("diarlog_collection", 10);
 const COLLECTION_TABLE_NAME = "collection";
 const types = new Map();
 
@@ -164,6 +166,14 @@ class Collection {
         return Collection.getCollection({ title: title });
     }
 
+    static decodeHashid(hash) {
+        return hashids.decode(hash)[0];
+    }
+
+    static getCollectionByHashid(hash) {
+        return Collection.getCollection({ dbid: Collection.decodeHashid(hash) });
+    }
+
     constructor(config) {
         this.dbid = config.dbid;
         this.uuid = config.uuid;
@@ -172,11 +182,11 @@ class Collection {
         this.title = config.title;
 
         /** @type {String[]} A list of all the content contained within this collection */
-        this.contents = config.contents;
+        this.contents = typeof config.contents === "string" ? JSON.parse(config.contents) : config.contents;
 
-        this.permissions = config.permissions;
-        this.meta = config.meta;
-        this.data = config.data;
+        this.permissions = typeof config.permissions === "string" ? JSON.parse(config.permissions) : config.permissions;
+        this.meta = typeof config.meta === "string" ? JSON.parse(config.meta) : config.meta;
+        this.data = typeof config.data === "string" ? JSON.parse(config.data) : config.data;
 
         /** @type {String} The path to the save directory of the collection */
         this.saveDirectory = path.join(collectionsDirectory, this.type, this.uuid);
@@ -228,6 +238,19 @@ class Collection {
     set description(value) {
         this.meta.description = value;
     }
+
+    get creator() {
+        return this.meta.creator;
+    }
+
+    set creator(value) {
+        this.meta.creator = value;
+    }
+
+    get hashid() {
+        return hashids.encode(this.dbid);
+    }
+
 }
 
 module.exports = Collection;

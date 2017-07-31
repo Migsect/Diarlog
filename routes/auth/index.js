@@ -20,7 +20,7 @@ router.get("/", (request, response) => {
         pageTitle: "Sign In"
     }), {
         styles: ["/stylesheets/auth/styles.css"],
-        scripts: ["/javascripts/built/auth-entry.js"],
+        scripts: ["/javascripts/built/auth/client-entry.js"],
         pageTitle: "Sign In"
     }));
 });

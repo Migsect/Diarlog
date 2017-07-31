@@ -47,12 +47,17 @@ router.post("/", (request, response) => {
         collection.description = description;
         console.log(collection);
         collection.save().then((result) => console.log(result));
+        response.status(200).json({
+            message: "Successfully created dump collection.",
+            redirect: "/dumps/" + collection.hashid
+        });
+    }).catch(error => {
+        Logger.error("POST", request.originalUrl, error);
+        response.status(500).json({
+            message: "Internal Server Error"
+        });
     });
 
-    response.status(200).json({
-        message: "Successfully created dump collection."
-        // redirect: TO THE THING
-    });
 });
 
 module.exports = router;
