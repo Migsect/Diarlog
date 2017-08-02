@@ -1,0 +1,41 @@
+.view {
+    display: flex;
+    flex-direction: column;
+}
+
+.upload-listing {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.upload-listing-item {
+    border-color: rgba(0, 0, 0, 0.5);
+    border-width: 1px;
+    border-style: solid;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    height: 100px;
+}
+
+.upload-listing-item-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.upload-listing-item-inner div {
+    text-align: center;
+}
+
+.upload-listing-item-file {}
+
+.upload-listing-item-description {
+    flex: 1 1 0px;
+    resize: none;
+    align-self: stretch;
+}

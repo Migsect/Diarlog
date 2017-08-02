@@ -13,19 +13,21 @@ const contentPage = templates(__dirname + "/content");
 const addPage = templates(__dirname + "/add");
 const settingsPage = templates(__dirname + "/settings");
 const permissionsPage = templates(__dirname + "/permissions");
-const previewPage = templates(__dirname + "/preview");
+const listingPage = templates(__dirname + "/listing");
 
 router.get("/:dumpId", (request, response) => {
+    const session = request.session;
     const dumpId = request.params.dumpId;
     Collection.getCollectionByHashid(dumpId).then((collection) => {
         if (!collection) {
             response.redirect("/dumps");
             return;
         }
-        response.send(globalLayout(request, previewPage({
-            url: request.originalUrl
+        response.send(globalLayout(request, listingPage({
+            url: request.originalUrl,
+            account: session.account
         }), {
-            styles: "/stylesheets/dumps/dump.css",
+            styles: ["/stylesheets/dumps/dump/listing.css"],
             pageTitle: collection.title
         }));
     }).catch(error => {
@@ -39,19 +41,20 @@ router.get("/:dumpId", (request, response) => {
 /* Page to add more content to the dump */
 router.get("/:dumpId/add", (request, response) => {
     response.send(globalLayout(request, addPage({}), {
-        styles: "/stylesheets/dumps/dump.css"
+        styles: ["/stylesheets/dumps/dump/add.css"],
+        scripts: ["/javascripts/built/dumps/dump/add-client-entry.js"]
     }));
 });
 
 router.get("/:dumpId/settings", (request, response) => {
     response.send(globalLayout(request, addPage({}), {
-        styles: "/stylesheets/dumps/dump.css"
+        styles: ["/stylesheets/dumps/dump.css"]
     }));
 });
 
 router.get("/:dumpId/permissions", (request, response) => {
     response.send(globalLayout(request, addPage({}), {
-        styles: "/stylesheets/dumps/dump.css"
+        styles: ["/stylesheets/dumps/dump.css"]
     }));
 });
 
@@ -60,7 +63,7 @@ router.get("/:dumpId/content/:contentId", (request, response) => {
     const dumpId = request.params.dumpId;
     const contentId = request.params.contendId;
     response.send(globalLayout(request, addPage({}), {
-        styles: "/stylesheets/dumps/dump.css"
+        styles: ["/stylesheets/dumps/dump.css"]
     }));
 });
 

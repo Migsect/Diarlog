@@ -175,7 +175,7 @@ input[type="email"],
 input[type="password"],
 input[type="text"] {}
 
-
+.button,
 input[type="submit"],
 input[type="button"] {
     @extend .clickable;
@@ -183,6 +183,12 @@ input[type="button"] {
     border-style: none;
     background-color: rgb(64, 128, 255);
     color: white;
+    margin: 0px;
+    padding: 4px;
+}
+
+.hidden {
+    display: none;
 }
 
 
