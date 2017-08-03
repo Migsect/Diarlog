@@ -9,33 +9,93 @@
     flex-direction: column;
 }
 
-.upload-listing-item {
+.upload-item {
     border-color: rgba(0, 0, 0, 0.5);
     border-width: 1px;
     border-style: solid;
+
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
+
     padding: 8px;
     background-color: rgba(0, 0, 0, 0.05);
     height: 100px;
 }
 
-.upload-listing-item-inner {
+.upload-item:not(:first-child) {
+    margin-top: 4px;
+}
+
+.upload-item>div:not(:first-child) {
+    margin-left: 6px;
+    padding-left: 6px;
+    border-left-style: solid;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
+.upload-field-header {
+    font-size: 80%;
+    font-weight: bolder;
+    padding-top: 4px;
+}
+
+.upload-inner {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.upload-listing-item-inner div {
+.upload-inner div {
     text-align: center;
 }
 
-.upload-listing-item-file {}
-
-.upload-listing-item-description {
-    flex: 1 1 0px;
-    resize: none;
-    align-self: stretch;
+.upload-controls {
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
+
+.upload-controls-item {
+    width: 20px;
+    height: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #4080ff;
+    color: white;
+}
+
+.upload-preview {
+    flex: 0 1 auto;
+}
+
+.upload-naming {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.upload-naming-input {}
+
+.upload-description {
+    flex: 2 1 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.upload-description-textarea {
+    flex: 1 0 0px;
+    font: inherit;
+    resize: none;
+}
+
+.upload-file {}
