@@ -65,6 +65,27 @@ class Utils {
 
         });
     }
+    static sendFormData(url, formData) {
+        return new Promise((resolve, reject) => {
+
+            const request = new XMLHttpRequest();
+            request.open("POST", url, true);
+            request.onload = () => {
+                const status = request.status;
+                try {
+                    const response = JSON.parse(request.responseText);
+                    response.status = status;
+                    resolve(response, request);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            request.onerror = () => {
+                reject();
+            };
+            request.send(formData);
+        });
+    }
 
     /**
      * Retrieves the value of a paramter in a URL.

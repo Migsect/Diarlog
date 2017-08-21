@@ -2,6 +2,8 @@
 
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer();
 
 const Collection = require(process.cwd() + "/modules/models/collections/Collection");
 const Logger = require(process.cwd() + "/modules/Logger");
@@ -65,6 +67,26 @@ router.get("/:dumpId/content/:contentId", (request, response) => {
     response.send(globalLayout(request, addPage({}), {
         styles: ["/stylesheets/dumps/dump.css"]
     }));
+});
+
+router.post("/:dumpId/add/content", upload.array("uploads"), (request, response) => {
+    const dumpId = request.params.dumpId;
+    const contentId = request.params.contendId;
+    const account = request.session.account;
+    if (!account) {
+        response.status(401).json({
+            message: "Unauthorized action"
+        });
+        return;
+    }
+
+    const uploadData = JSON.parse(request.body.uploadData);
+    const files = request.files;
+    console.log(uploadData);
+
+    response.status(200).json({
+        message: "sucess"
+    });
 });
 
 module.exports = router;

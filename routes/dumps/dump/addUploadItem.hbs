@@ -1,20 +1,22 @@
 <div class="upload-item">
     <div class="upload-controls">
-        <div class="upload-controls-item clickable upload-controls-item-remove">X</div>
-        <div class="upload-controls-item clickable upload-controls-item-moveup">&uarr;</div>
-        <div class="upload-controls-item clickable upload-controls-item-movedown">&darr;</div>
+        <div class="upload-controls-item button upload-controls-item-remove">X</div>
+        <div class="upload-controls-item button upload-controls-item-moveup">&uarr;</div>
+        <div class="upload-controls-item button upload-controls-item-movedown">&darr;</div>
     </div>
-    {{#if preview}}
     <div class="upload-preview">
         <div class="upload-field-header">Preview</div>
+        {{#if isImage}}
+        <div class="upload-preview-image">
+            <img src={{source}}>
+        </div> {{else}} {{/if}}
 
     </div>
-    {{/if}}
     <div class="upload-naming">
         <div class="upload-field-header">File Name</div>
         <input type="text" class="upload-naming-input upload-naming-filename" value="{{filename}}" disabled placeholder="File Name">
         <div class="upload-field-header">Upload Title</div>
-        <input type="text" class="upload-naming-input upload-naming-title" value="{{filename}}" placeholder="File Name">
+        <input type="text" class="upload-naming-input upload-naming-title" value="{{basename}}" placeholder="File Name">
     </div>
     <div class="upload-description">
         <div class="upload-field-header">Upload Description</div>

@@ -7,6 +7,7 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    margin-bottom: 8px;
 }
 
 .upload-item {
@@ -73,7 +74,22 @@
 }
 
 .upload-preview {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
+    max-width: 100px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.upload-preview-image {
+    flex: 1 0 0px;
+    overflow: hidden;
+}
+
+.upload-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .upload-naming {

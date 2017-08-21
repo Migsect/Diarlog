@@ -18,6 +18,10 @@ class Content {
         return CONTENT_TABLE_NAME;
     }
 
+    static get directory() {
+        return contentDirectory;
+    }
+
     static initializeDatabase() {
         const connection = DatabaseManager.instance.connection;
         return connection.schema.createTableIfNotExists(CONTENT_TABLE_NAME, function(table) {
