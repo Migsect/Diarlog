@@ -3,7 +3,7 @@
 const $ = document.querySelector.bind(document);
 const Utils = require("WebUtils");
 
-const addUploadItemTemplate = require("./addUploadItem.hbs");
+const addUploadItemTemplate = require("./uploadItem.hbs");
 
 const uploadInput = $("#upload-input");
 const uploadButton = $("#upload-input-button");

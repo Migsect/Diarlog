@@ -3,13 +3,14 @@
 const path = require("path");
 const Uuid = require("uuid/v4");
 
+const Utils = require(process.cwd() + "/modules/Utils");
 const DatabaseManager = require(process.cwd() + "/modules/database/DatabaseManager");
 const Logger = require(process.cwd() + "/modules/Logger");
 
 const config = require(process.cwd() + "/config");
 const contentDirectory = path.join((config.data && config.data.saveDirectory) || "./data", "content");
 
-const CONTENT_TABLE_NAME = "account";
+const CONTENT_TABLE_NAME = "content";
 const types = new Map();
 
 class Content {

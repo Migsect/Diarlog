@@ -3,6 +3,7 @@
 const http = require("http");
 const express = require("express");
 const path = require("path");
+const fs = require("fs-extra");
 
 const Logger = require(process.cwd() + "/modules/Logger");
 
@@ -12,8 +13,10 @@ const app = express();
 const server = http.createServer(app);
 
 /* ########################################################################## *
- * # Handling database initialization                                       # *  
+ * # Handling data storage initialization                                       # *  
  * ########################################################################## */
+
+fs.ensureDirSync(config.data.saveDirectory);
 
 const DatabaseManager = require("./modules/Database/DatabaseManager");
 /* Core Models */
