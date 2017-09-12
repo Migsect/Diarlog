@@ -4,6 +4,7 @@ const path = require("path");
 const Hashids = require("hashids");
 const Uuid = require("uuid/v4");
 
+const Utils = require(process.cwd() + "/modules/Utils");
 const DatabaseManager = require(process.cwd() + "/modules/database/DatabaseManager");
 const Content = require(process.cwd() + "/modules/models/content/Content");
 const Logger = require(process.cwd() + "/modules/Logger");
@@ -182,11 +183,11 @@ class Collection {
         this.title = config.title;
 
         /** @type {String[]} A list of all the content contained within this collection */
-        this.contents = typeof config.contents === "string" ? JSON.parse(config.contents) : config.contents;
+        this.contents = Utils.toObject(config.contents) || [];
 
-        this.permissions = typeof config.permissions === "string" ? JSON.parse(config.permissions) : config.permissions;
-        this.meta = typeof config.meta === "string" ? JSON.parse(config.meta) : config.meta;
-        this.data = typeof config.data === "string" ? JSON.parse(config.data) : config.data;
+        this.permissions = Utils.toObject(config.permissions) || {};
+        this.meta = Utils.toObject(config.meta) || {};
+        this.data = Utils.toObject(config.data) || {};
 
         /** @type {String} The path to the save directory of the collection */
         this.saveDirectory = path.join(collectionsDirectory, this.type, this.uuid);

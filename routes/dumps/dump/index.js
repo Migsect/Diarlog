@@ -87,23 +87,43 @@ router.post("/:dumpId/add/content", upload.array("uploads"), (request, response)
     const files = request.files;
     console.log(uploadData, files);
 
+    /* Creating all the content items that are uploaded, adding them to the database */
     const contentUploads = uploadData.map((upload, index) => {
+        const file = files[index];
+        const mimetype = file.mimetype;
+        /* mimetype has a higher class, so getting the actual extension */
+        const fileType = mimetype.split("/")[1];
+        const buffer = file.buffer;
+
         const title = upload.title;
         const filename = upload.filename;
         const description = upload.description;
-        console.log("title:", title, "filename:", filename, "description:", description);
-        return Content.createContent("dump", title).then((result) => {
-            console.log(result);
+
+        // console.log("title:", title, "filename:", filename, "description:", description);
+        // console.log(upload);
+        return Content.createContent("dump", title).then((content) => {
+            /* Saving the content's file */
+            content.setDescription(description);
+            content.setUploadFileName(filename);
+            return content.updateFile(buffer, fileType)
+                .then(() => content.save());
         });
     });
 
-    Promise.all(contentUploads).then(() => {}).catch((error) => {
+    /* Returning successes or failures once everything saves.*/
+    Promise.all(contentUploads).then((uploads) => {
+        console.log(uploads);
+
+        response.status(200).json({
+            message: "success"
+        });
+    }).catch((error) => {
         Logger.error("/:dumpId/add/content", error);
+        response.status(500).json({
+            message: "Internal Server Error"
+        });
     });
 
-    response.status(200).json({
-        message: "success"
-    });
 });
 
 module.exports = router;

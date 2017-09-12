@@ -157,6 +157,16 @@ app.use(function(error, request, response /* next */ ) {
     response.render("error");
 });
 
+function onTerminate() {
+    server.close(() => {
+        process.exit(0);
+    });
+}
+
+/* Closing the server when a sigterm is sent */
+process.on("SIGTERM", onTerminate);
+process.on("SIGINT", onTerminate);
+
 module.exports = {
     app: app,
     server: server

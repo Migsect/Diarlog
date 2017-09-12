@@ -93,9 +93,9 @@ class Content {
                 uuid: uuid,
                 type: type,
                 title: title,
-                permissions: {},
-                meta: {},
-                data: {}
+                permissions: "{}",
+                meta: "{}",
+                data: "{}"
             };
             return Content.constructContent(config);
         });
@@ -159,14 +159,14 @@ class Content {
         this.title = config.title;
 
         /** @type {Object} Permissions contain information on who can see and who can edit the content */
-        this.permissions = JSON.parse(config.permissions);
+        this.permissions = Utils.toObject(config.permissions) || {};
         /** @type {Object} Describes the content such as owner, time of creation, etc */
-        this.meta = JSON.parse(config.meta);
+        this.meta = Utils.toObject(config.meta) || {};
         /** @type {Object} Carries data pertaining to the content that may change based on type */
-        this.data = JSON.parse(config.data);
+        this.data = Utils.toObject(config.data) || {};
 
         /** @type {String} the path to the save directory of the content used for high volume data */
-        this.saveDirectory = path.join(contentDirectory, this.uuid);
+        // this.saveDirectory = path.join(contentDirectory, this.uuid);
     }
 
     /**
@@ -181,9 +181,7 @@ class Content {
             .where("dbid", this.dbid)
             .update({
                 title: this.title,
-                contents: JSON.stringify([]),
                 permissions: JSON.stringify(this.permissions),
-                settings: JSON.stringify(this.settings),
                 meta: JSON.stringify(this.meta),
                 data: JSON.stringify(this.data)
             });

@@ -3,6 +3,7 @@
 const PasswordHash = require("password-hash");
 const Uuid = require("uuid/v4");
 
+const Utils = require(process.cwd() + "/modules/Utils");
 const DatabaseManager = require("../database/DatabaseManager");
 const Logger = require(process.cwd() + "/modules/Logger");
 
@@ -124,9 +125,9 @@ class Account {
         this.email = config.email;
         this.password = config.password;
 
-        this.permissions = config.permissions.length ? JSON.parse(config.permissions) : {};
-        this.settings = config.settings.length ? JSON.parse(config.settings) : {};
-        this.data = config.data.length ? JSON.parse(config.data) : {};
+        this.permissions = Utils.toObject(config.permissions) || {};
+        this.settings = Utils.toObject(config.settings) || {};
+        this.data = Utils.toObject(config.data) || {};
     }
 
     verify(passwordAttempt) {
