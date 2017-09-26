@@ -123,6 +123,7 @@ finalizeButton.addEventListener("click", (event) => {
 
     Utils.sendFormData("./add/content", formData).then((result) => {
         console.log("result:", result);
+        window.location.href = ".";
     }).catch((error) => {
         console.log("error:", error);
     });

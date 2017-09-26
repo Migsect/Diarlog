@@ -1,6 +1,7 @@
 "use strict";
 
 const path = require("path");
+const Hashids = require("hashids");
 const Uuid = require("uuid/v4");
 
 const Utils = require(process.cwd() + "/modules/Utils");
@@ -10,6 +11,7 @@ const Logger = require(process.cwd() + "/modules/Logger");
 const config = require(process.cwd() + "/config");
 const contentDirectory = path.join((config.data && config.data.saveDirectory) || "./data", "content");
 
+const hashids = new Hashids("diarlog_content", 10);
 const CONTENT_TABLE_NAME = "content";
 const types = new Map();
 
@@ -119,6 +121,18 @@ class Content {
     }
 
     /**
+     * Gets the first matching content item for the query.
+     * Promise will return null if nothing could be found.
+     * 
+     * @param  {Object} query The query to search for.
+     * @return {Promise} Promise to return the promise or null if not found.
+     */
+    static getContent(query) {
+        return Content.getContents(query)
+            .then(contents => contents.length > 0 ? contents[0] : null);
+    }
+
+    /**
      * Retrieves all the contents that match the field and are in the list.
      * This is generally useful for grabbing all contents with specific ids (in one command).
      * For more complex queries, one may want to create a custom query.
@@ -139,15 +153,24 @@ class Content {
     }
 
     /**
-     * Gets the first matching content item for the query.
-     * Promise will return null if nothing could be found.
-     * 
-     * @param  {Object} query The query to search for.
-     * @return {Promise} Promise to return the promise or null if not found.
+     * Decodes the hashid used to access the content by the server.
+     *
+     * @param      {String}  hash The hashed string of the DBID
+     * @return     {Number}  The DBID of the content item.
      */
-    static getContent(query) {
-        return Content.getCollections(query)
-            .then(contents => contents.length > 0 ? contents[0] : null);
+    static decodeHashid(hash) {
+        return hashids.decode(hash)[0];
+    }
+
+    /**
+     * Retrieves the content based upon a HashId.
+     * This uses Content.decodeHashId to determine the DBID of the hashid.
+     *
+     * @param      {String}  hash The hash to use to find the content.
+     * @return     {Promise} A promise to return the content if found.
+     */
+    static getContentByHashid(hash) {
+        return Content.getContent({ dbid: Content.decodeHashid(hash) });
     }
 
     constructor(config) {
@@ -165,15 +188,13 @@ class Content {
         /** @type {Object} Carries data pertaining to the content that may change based on type */
         this.data = Utils.toObject(config.data) || {};
 
-        /** @type {String} the path to the save directory of the content used for high volume data */
-        // this.saveDirectory = path.join(contentDirectory, this.uuid);
     }
 
     /**
      * Saves the content to the database.  This will override everything within the database with all 
      * fields of the changed content.
      * 
-     * @return {} [description]
+     * @return {Promise} A promise that returns the updated object 
      */
     save() {
         const connection = DatabaseManager.instance.connection;
@@ -185,6 +206,10 @@ class Content {
                 meta: JSON.stringify(this.meta),
                 data: JSON.stringify(this.data)
             });
+    }
+
+    get hashid() {
+        return hashids.encode(this.dbid);
     }
 
 }

@@ -12,8 +12,7 @@
         <div class="gutter"></div>
         <div class="content">
             <div class="header">
-                <div class="header-title">{{siteTitle}}
-                </div>
+                <div class="header-title">{{siteTitle}}</div>
                 <div class="header-padding"></div>
                 <div class="header-info">
                     {{#if account}}
@@ -29,7 +28,7 @@
                 </a> {{/each}}
             </div>
             {{#if pageTitle}}
-            <div class="page-title">{{pageTitle}}</div>{{/if}}
+            <h1 class="page-title">{{pageTitle}} {{#if pageSubtitle}} - {{pageSubtitle}} {{/if}}</h1>{{/if}}
             <div class="view">
                 {{{view}}}
             </div>

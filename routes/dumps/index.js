@@ -10,6 +10,7 @@ const templates = require(process.cwd() + "/templates/templates");
 const page = templates(__dirname + "/page");
 const globalLayout = require(process.cwd() + "/layouts/global");
 
+router.use("/content", require("./content"));
 router.use("/create", require("./create"));
 router.use("/", require("./dump"));
 

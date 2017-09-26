@@ -1,0 +1,21 @@
+.view {
+    display: flex;
+    flex-direction: column;
+}
+
+.dump-content {
+    display: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.dump-content img {
+    width: 100%;
+}
+
+.dump-content-description {
+    flex: 1 1 auto;
+    margin: 8px 0px;
+    padding: 0px 4px;
+    background-color: rgba(0, 0, 0, 0.05);
+}

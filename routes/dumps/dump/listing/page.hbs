@@ -5,6 +5,11 @@
     <a href="{{url}}/permissions" class="dump-settings-item button">Permissions</a>
 </div>{{/if}}
 <div class="content-previews">
-    {{#each contents}} {{/each}}
+    {{#each contents}}
+    <a href="{{this.page}}" class="content-previews-item clickable">
+        <div class="content-previews-item-title"> {{this.title}} </div>
+        <img src={{this.thumbnail}}>
+    </a>
+    {{/each}}
 </div>
 <input type="button" class="load-more clickable" value="Load More" data-amount="{{20}}" data-start="{{contents.length}}">

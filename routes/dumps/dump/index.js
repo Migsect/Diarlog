@@ -27,13 +27,23 @@ router.get("/:dumpId", (request, response) => {
             response.redirect("/dumps");
             return;
         }
-        response.send(globalLayout(request, listingPage({
-            url: request.originalUrl,
-            account: session.account
-        }), {
-            styles: ["/stylesheets/dumps/dump/listing/styles.css"],
-            pageTitle: collection.title
-        }));
+        return collection.getContents()
+            .then((contents) => {
+
+                response.send(globalLayout(request, listingPage({
+                    url: request.originalUrl,
+                    account: session.account,
+                    contents: contents.map((content) => ({
+                        title: content.title,
+                        thumbnail: content.thumbnailURL,
+                        page: content.pageURL(collection)
+                    }))
+                }), {
+                    styles: ["/stylesheets/dumps/dump/listing/styles.css"],
+                    pageTitle: collection.title,
+                }));
+            });
+
     }).catch(error => {
         Logger.error("GET", request.originalUrl, error);
         response.status(500).json({
@@ -50,31 +60,51 @@ router.get("/:dumpId/add", (request, response) => {
     }));
 });
 
+/* Page for editing the settings */
 router.get("/:dumpId/settings", (request, response) => {
     response.send(globalLayout(request, settingsPage({}), {
         styles: ["/stylesheets/dumps/dump/styles.css"]
     }));
 });
 
+/* Page for editing the permissions */
 router.get("/:dumpId/permissions", (request, response) => {
     response.send(globalLayout(request, permissionsPage({}), {
         styles: ["/stylesheets/dumps/permissions/styles.css"]
     }));
 });
 
-/* Page displaying the dump item (uses sockets) */
-router.get("/:dumpId/content/:contentId", (request, response) => {
+/* Page displaying the dump item (uses sockets in the future?) */
+router.get("/:dumpId/:contentId", (request, response) => {
     const dumpId = request.params.dumpId;
-    const contentId = request.params.contendId;
-    response.send(globalLayout(request, contentPage({}), {
-        styles: ["/stylesheets/dumps/content/styles.css"]
-    }));
+    const contentId = request.params.contentId;
+    Promise.all([
+            Collection.getCollectionByHashid(dumpId),
+            Content.getContentByHashid(contentId)
+        ])
+        .then((results) => {
+            const collection = results[0];
+            const content = results[1];
+            response.send(globalLayout(request, contentPage({
+                contentURL: content.contentURL,
+                contentDescription: content.data.description
+            }), {
+                styles: ["/stylesheets/dumps/dump/content/styles.css"],
+                pageTitle: collection.title,
+                pageSubtitle: content.title
+            }));
+        })
+        .catch((error) => {
+            Logger.error("GET", request.originalUrl, error);
+            response.status(500).json({
+                message: "Internal Server Error"
+            });
+        });
 });
 
 /* Adding content to the dump */
 router.post("/:dumpId/add/content", upload.array("uploads"), (request, response) => {
     const dumpId = request.params.dumpId;
-    const contentId = request.params.contendId;
     const account = request.session.account;
     if (!account) {
         response.status(401).json({
@@ -85,45 +115,63 @@ router.post("/:dumpId/add/content", upload.array("uploads"), (request, response)
 
     const uploadData = JSON.parse(request.body.uploadData);
     const files = request.files;
-    console.log(uploadData, files);
 
-    /* Creating all the content items that are uploaded, adding them to the database */
-    const contentUploads = uploadData.map((upload, index) => {
-        const file = files[index];
-        const mimetype = file.mimetype;
-        /* mimetype has a higher class, so getting the actual extension */
-        const fileType = mimetype.split("/")[1];
-        const buffer = file.buffer;
+    Collection.getCollectionByHashid(dumpId)
+        .then((collection) => {
+            /* If we can't find the collection, then naughty stuff is happening */
+            if (!collection) {
+                Logger.error("/:dumpId/add/content", "No Collection Found:", dumpId);
+                response.status(400).json({
+                    message: "Invalid Request"
+                });
+                return;
+            }
 
-        const title = upload.title;
-        const filename = upload.filename;
-        const description = upload.description;
+            /* Creating all the content items that are uploaded, adding them to the database */
+            const contentUploads = uploadData.map((upload, index) => {
+                const file = files[index];
+                const mimetype = file.mimetype;
+                /* mimetype has a higher class, so getting the actual extension */
+                const fileType = mimetype.split("/")[1];
+                const buffer = file.buffer;
 
-        // console.log("title:", title, "filename:", filename, "description:", description);
-        // console.log(upload);
-        return Content.createContent("dump", title).then((content) => {
-            /* Saving the content's file */
-            content.setDescription(description);
-            content.setUploadFileName(filename);
-            return content.updateFile(buffer, fileType)
-                .then(() => content.save());
+                const title = upload.title;
+                const filename = upload.filename;
+                const description = upload.description;
+
+                return Content.createContent("dump", title)
+                    .then((content) => {
+                        /* Saving the content's file */
+                        content.setDescription(description);
+                        content.setUploadFileName(filename);
+                        return content.updateFile(buffer, fileType)
+                            .then(() => content.save())
+                            .then(() => content);
+
+                    });
+            });
+            return Promise.all(contentUploads)
+                .then((uploads) => {
+                    uploads.forEach((upload) => collection.addContent(upload));
+                    return collection.save();
+                })
+                .then(() => {
+                    response.status(200).json({
+                        message: "success"
+                    });
+                })
+                .catch((error) => {
+                    Logger.error("/:dumpId/add/content", error);
+                    response.status(500).json({
+                        message: "Internal Server Error"
+                    });
+                });
+        }).catch(error => {
+            Logger.error("GET", request.originalUrl, error);
+            response.status(500).json({
+                message: "Internal Server Error"
+            });
         });
-    });
-
-    /* Returning successes or failures once everything saves.*/
-    Promise.all(contentUploads).then((uploads) => {
-        console.log(uploads);
-
-        response.status(200).json({
-            message: "success"
-        });
-    }).catch((error) => {
-        Logger.error("/:dumpId/add/content", error);
-        response.status(500).json({
-            message: "Internal Server Error"
-        });
-    });
-
 });
 
 module.exports = router;

@@ -1,16 +1,17 @@
-$background-color: rgb(250, 250, 250);
+$background-color: rgb(48, 48, 48);
 
-$header-background-color: #fff;
-$header-color: black;
+$page-color: rgb(67, 67, 67);
 
-$text-background-color: white;
-$text-color: black;
+$header-color: white;
+
+$text-background-color: rgb(127, 127, 127);
+$text-color: white;
 
 $primary-color: red;
 $secondary-color: green;
 $tertiary-color: blue;
 
-$seperator-color: rgba(0, 0, 0, 0.3);
+$seperator-color: rgba(255, 255, 255, 0.3);
 $button-color: rgb(64, 128, 255);
 
 html {
@@ -44,7 +45,7 @@ body {
 }
 
 .content {
-    background-color: rgba(255, 255, 255, 1.00);
+    background-color: $page-color;
     max-width: 1000px;
     flex: 1 1 1000px;
     display: flex;
@@ -58,7 +59,6 @@ body {
 }
 
 .header {
-    background-color: $header-background-color;
     color: $header-color;
     border-color: $seperator-color;
     border-bottom-style: solid;
@@ -69,7 +69,7 @@ body {
 }
 
 .header-title {
-    font-size: 180%;
+    font-size: 200%;
 }
 
 .header-padding {
@@ -95,23 +95,16 @@ body {
 }
 
 .navigation-item {
-    color: rgba(0, 0, 0, 0.5);
+    color: $text-color;
+    filter: opacity(0.5);
     text-decoration: none;
     font-size: 125%;
 }
 
 .navigation-item:hover,
 .navigation-item.active {
-    color: rgba(0, 0, 0, 1.0);
-}
 
-.page-title {
-    padding-top: 8px;
-    padding-bottom: 4px;
-    border-color: $seperator-color;
-    border-bottom-style: solid;
-    border-width: 1px;
-    font-size: 200%;
+    filter: opacity(1.0);
 }
 
 .view {
@@ -160,10 +153,17 @@ body {
 .clickable:hover {
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.2);
     cursor: pointer;
+
+    img {
+        filter: brightness(110%);
+    }
 }
 
 .clickable:active {
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+    img {
+        filter: brightness(120%);
+    }
 }
 
 .disabled {}
@@ -210,6 +210,48 @@ input[type="button"]:disabled {
     visibility: hidden;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5 {
+    border-color: $seperator-color;
+    border-bottom-style: solid;
+    border-width: 1px;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 200%;
+    margin: 8px 0px;
+}
+
+h2 {
+    font-size: 160%;
+    margin: 8px 0px;
+}
+
+h3 {
+    font-size: 130%;
+    margin: 8px 0px;
+}
+
+h4 {
+    font-size: 110%;
+    margin: 4px 0px;
+    border-bottom-style: dotted;
+    font-weight: bolder;
+}
+
+h5 {
+    margin: 4px 0px;
+    border-bottom-style: dotted;
+    font-weight: bolder;
+}
+
+p {
+    margin: 4px 0px;
+}
 
 //     @media (max-width: 50em) {
 //     .header-title {

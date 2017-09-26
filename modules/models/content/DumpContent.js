@@ -2,10 +2,12 @@
 
 const path = require("path");
 const fs = require("fs-extra");
+const sharp = require("sharp");
 
 const Content = require("./Content");
 
 const dumpContentDirectory = path.join(Content.directory, "dump");
+const thumbnailFileName = "thumbnail.png";
 
 class DumpContent extends Content {
 
@@ -49,9 +51,14 @@ class DumpContent extends Content {
         /* Deleting the old file first before writing the new one */
         return this.deleteFile().then(() => {
             this.data.fileType = fileType;
-            this.data.fileLocation = path.join(dumpContentDirectory, this.saveName);
-            return fs.ensureDir(dumpContentDirectory)
-                .then(() => fs.writeFile(this.data.fileLocation, bytes));
+            this.data.fileLocation = path.join(this.saveDirectory, this.contentFile);
+            return fs.ensureDir(this.saveDirectory)
+                .then(() => fs.writeFile(this.data.fileLocation, bytes))
+                .then(() => {
+                    return sharp(this.data.fileLocation)
+                        .resize(200, 200)
+                        .toFile(this.thumbnailFile);
+                });
         });
     }
 
@@ -72,6 +79,31 @@ class DumpContent extends Content {
         }
     }
 
+    /** Returns the save directory for the content */
+    get saveDirectory() {
+        return path.join(dumpContentDirectory, this.uuid);
+    }
+    /** Returns the path to the thumbnail file */
+    get thumbnailFile() {
+        return path.join(this.saveDirectory, thumbnailFileName);
+    }
+    /** Returns the name of the content file. */
+    get contentFile() {
+        return "content" + (this.data.fileType ? ("." + this.data.fileType) : "");
+    }
+    /** Returns the URL of the thumbnail */
+    get thumbnailURL() {
+        return "/dumps/content/" + this.uuid + "/" + thumbnailFileName;
+    }
+    /** Returns the URL of the content */
+    get contentURL() {
+        return "/dumps/content/" + this.uuid + "/" + this.saveName;
+    }
+    /** Returns the URL of the content page, requires a dump collection */
+    pageURL(collection) {
+        return "/dumps/" + collection.hashid + "/" + this.hashid;
+    }
+
     /**
      * Returns the fileName of the content.
      * This is the uuid of the content plus the file extension.
@@ -79,7 +111,7 @@ class DumpContent extends Content {
      * @return {String} The fileName of the content
      */
     get saveName() {
-        return this.uuid + (this.data.fileType ? ("." + this.data.fileType) : "");
+        return "content" + (this.data.fileType ? ("." + this.data.fileType) : "");
     }
 }
 

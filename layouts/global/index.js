@@ -48,12 +48,14 @@ module.exports = function(request, view, options) {
     const styles = (options && options.styles) || [];
     const scripts = (options && options.scripts) || [];
     const pageTitle = (options && options.pageTitle) || null;
+    const pageSubtitle = (options && options.pageSubtitle) || null;
     return layoutTemplate({
         view: view,
         styles: styles,
         scripts: scripts,
         account: account,
         pageTitle: pageTitle,
+        pageSubtitle: pageSubtitle,
         siteTitle: siteTitle,
         copyright: copyright,
         navigation: coreNavigation.map((item) => {

@@ -218,7 +218,7 @@ class Collection {
      * @param {Content} content The content item to add to the collection.
      */
     addContent(content) {
-        this.content.push(content.dbid);
+        this.contents.push(content.dbid);
     }
 
     /**
